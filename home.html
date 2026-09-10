@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY-CARD · 小组名片</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #0e0e0e;
+    --ink: #f4f1ea;
+    --line: rgba(244, 241, 234, 0.22);
+    --dim: rgba(244, 241, 234, 0.55);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .condensed {
+    font-family: "Arial Narrow", "HelveticaNeue-CondensedBold", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-stretch: condensed;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+  }
+
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 40px 32px 0;
+  }
+
+  /* ================= 板块一 · HERO ================= */
+  .hero {
+    border: 1px solid var(--line);
+    padding: 0 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .pill:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .pill.solid {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .pill.solid:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .nav-center {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .sparkle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    font-size: 12px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .sparkle-row .stars {
+    letter-spacing: 8px;
+    color: var(--ink);
+  }
+
+  .hero-title {
+    text-align: center;
+    padding: 40px 24px 0;
+  }
+
+  .hero-title h1 {
+    font-size: clamp(56px, 11vw, 128px);
+    font-weight: 900;
+    line-height: 0.95;
+    color: var(--ink);
+  }
+
+  .hero-title .outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+
+  .team {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(16px, 4vw, 48px);
+    flex-wrap: wrap;
+    padding: 44px 24px 8px;
+  }
+
+  .person {
+    text-align: center;
+  }
+
+  .person .role {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 12px;
+    margin-bottom: 12px;
+  }
+
+  .person.leader .role {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .person .name {
+    font-size: clamp(34px, 5.5vw, 62px);
+    font-weight: 900;
+    line-height: 1.05;
+    transition: opacity 0.25s ease;
+  }
+
+  .person:hover .name {
+    opacity: 0.55;
+  }
+
+  .person {
+    cursor: pointer;
+  }
+
+  .person .name-en {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    margin-top: 8px;
+  }
+
+  .divider-star {
+    text-align: center;
+    font-size: 18px;
+    color: var(--dim);
+    padding: 28px 0 20px;
+  }
+
+  .hero-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ================= 板块二 · 信息网格 ================= */
+  .info {
+    border: 1px solid var(--line);
+    border-top: none;
+  }
+
+  .info-head {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .info-head .slogan {
+    padding: 36px 32px;
+    border-right: 1px solid var(--line);
+  }
+
+  .info-head h2 {
+    font-size: clamp(44px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 0.95;
+  }
+
+  .info-head .touch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .spin-wrap {
+    width: 130px;
+    height: 130px;
+    position: relative;
+  }
+
+  .spin-wrap svg {
+    width: 100%;
+    height: 100%;
+    animation: spin 14s linear infinite;
+  }
+
+  .spin-wrap .center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cell {
+    padding: 30px 32px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cell:nth-child(2n) { border-right: none; }
+  .cell:nth-child(3), .cell:nth-child(4) { border-bottom: none; }
+
+  .cell h3 {
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .cell p, .cell li {
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: var(--dim);
+  }
+
+  .tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    padding: 7px 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.3s ease, color 0.3s ease;
+  }
+
+  .tag:hover {
+    transform: translateY(-5px) scale(1.06);
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .topic-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .contact-list {
+    list-style: none;
+  }
+
+  .contact-list li {
+    margin-bottom: 10px;
+  }
+
+  .contact-list a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.25s ease;
+  }
+
+  .contact-list a:hover {
+    color: var(--dim);
+  }
+
+  .info-desc {
+    padding: 26px 32px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .info-desc p {
+    max-width: 640px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--dim);
+  }
+
+  .info-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 32px 28px;
+    flex-wrap: wrap;
+  }
+
+  .join h4 {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .join a {
+    display: inline-block;
+    padding: 9px 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 12.5px;
+    letter-spacing: 1px;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .join a:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .foot-links {
+    display: flex;
+    gap: clamp(24px, 5vw, 64px);
+    flex-wrap: wrap;
+  }
+
+  .foot-links div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11.5px;
+    letter-spacing: 1px;
+    color: var(--dim);
+  }
+
+  .foot-links span:first-child {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  @media (max-width: 720px) {
+    .info-head { grid-template-columns: 1fr; }
+    .info-head .slogan { border-right: none; border-bottom: 1px solid var(--line); }
+    .grid { grid-template-columns: 1fr; }
+    .cell { border-right: none; }
+    .cell:nth-child(3) { border-bottom: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ============ 板块一：HERO ============ -->
+  <section class="hero" id="top">
+    <nav class="nav">
+      <a class="pill solid" href="#top">◆ MY-CARD</a>
+      <div class="nav-center">
+        <a class="pill" href="#top">成员 MEMBERS</a>
+        <a class="pill" href="#about">简介 ABOUT</a>
+        <a class="pill" href="#topic">课题 TOPIC</a>
+        <a class="pill" href="#contact">联系 CONTACT</a>
+      </div>
+      <a class="pill" href="#contact">FEED ↗</a>
+    </nav>
+
+    <div class="sparkle-row">
+      <span class="stars">✦ ✦ ✦</span>
+      <span>TEAM OF 3 · EST. 2026</span>
+      <span class="stars">✦ ✦ ✦</span>
+    </div>
+
+    <div class="hero-title">
+      <h1 class="condensed">Meet Our</h1>
+      <h1 class="condensed outline">Team</h1>
+    </div>
+
+    <div class="team">
+      <div class="person leader">
+        <span class="role">组长 · LEADER</span>
+        <div class="name condensed"><a href="liaoruoxi.html" style="color:inherit;text-decoration:none;">廖若曦</a></div>
+        <div class="name-en">LIAO RUOXI</div>
+      </div>
+      <div class="person">
+        <span class="role">组员 · MEMBER</span>
+        <div class="name condensed"><a href="fengchuhan.html" style="color:inherit;text-decoration:none;">冯楚涵</a></div>
+        <div class="name-en">FENG CHUHAN</div>
+      </div>
+      <div class="person">
+        <span class="role">组员 · MEMBER</span>
+        <div class="name condensed"><a href="liyiran.html" style="color:inherit;text-decoration:none;">李怡苒</a></div>
+        <div class="name-en">LI YIRAN</div>
+      </div>
+    </div>
+
+    <div class="divider-star">✦</div>
+
+    <div class="hero-foot">
+      <span>©2026 MY-CARD</span>
+      <span>SCROLL ↓ 下滑查看详情</span>
+      <span>SORTING · OBSERVING · EXPERIMENTING</span>
+    </div>
+  </section>
+
+  <!-- ============ 板块二：信息网格 ============ -->
+  <section class="info">
+
+    <!-- 大标题 + 旋转圆标 -->
+    <div class="info-head">
+      <div class="slogan">
+        <h2 class="condensed">Drop Us<br>A Line</h2>
+      </div>
+      <div class="touch">
+        <div class="spin-wrap">
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <path id="circlePath" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
+            </defs>
+            <text fill="#f4f1ea" font-size="10.5" letter-spacing="2.5">
+              <textPath href="#circlePath">GET IN TOUCH · GET IN TOUCH · </textPath>
+            </text>
+          </svg>
+          <span class="center-dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 四宫格：简介 / 技能 / 课题 / 联系 -->
+    <div class="grid">
+      <div class="cell" id="about">
+        <h3 class="condensed">小组简介 · Intro</h3>
+        <p>
+          我们是一个充满活力的小组，由组长廖若曦带领，组员冯楚涵、李怡苒共同组成。
+          平时做事比较认真，遇到问题会一起商量着来。
+          目前主要在做视觉传达方向的一些练习和探索，还有很多需要学习的地方，
+          会尽力把交给我们的每一件事做好。
+        </p>
+      </div>
+
+      <div class="cell">
+        <h3 class="condensed">技能 · Skills</h3>
+        <div class="tags">
+          <span class="tag">Sorting</span>
+          <span class="tag">Observing</span>
+          <span class="tag">Experimenting</span>
+        </div>
+        <p style="margin-top: 16px;">
+          分类 · 观察 · 实验，三种方法，一种态度。
+        </p>
+      </div>
+
+      <div class="cell" id="topic">
+        <h3 class="condensed">课题选择 · Topic</h3>
+        <div class="topic-name">《客厅》</div>
+        <p>
+          以"客厅"为研究对象，
+          从多元视角切入探索空间形式与生活的边界。
+        </p>
+      </div>
+
+      <div class="cell" id="contact">
+        <h3 class="condensed">联系方式 · Contact</h3>
+        <ul class="contact-list">
+          <li>Email · 廖若曦 — <a href="mailto:lanhuan646@gmail.com">lanhuan646@gmail.com</a></li>
+          <li>Email · 冯楚涵 — <a href="mailto:2736024602@qq.com">2736024602@qq.com</a></li>
+          <li>Email · 李怡苒 — <a href="mailto:3490850171@qq.com">3490850171@qq.com</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 底部说明 + 订阅栏 -->
+    <div class="info-desc">
+      <p>
+        We are available to help with any queries that you have about our project or teamwork
+        (weekdays). You can email us any time and we will get back to you as soon as possible.
+        Please note we usually reply on weekdays.
+      </p>
+    </div>
+
+    <div class="info-foot">
+      <div class="join">
+        <h4 class="condensed">Join Our Community</h4>
+        <a href="mailto:lanhuan646@gmail.com">Email →</a>
+      </div>
+      <div class="foot-links">
+        <div>
+          <span>关于我们</span>
+          <span>FAQ</span>
+          <span>联系我们</span>
+        </div>
+        <div>
+          <span>课题进展</span>
+          <span>成员分工</span>
+          <span>使用条款</span>
+        </div>
+        <div>
+          <span>如何参与</span>
+          <span>项目仓库</span>
+          <span>更新日志</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+</body>
+</html>
