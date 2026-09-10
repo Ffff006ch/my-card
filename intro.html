@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MY-CARD · 进入名片</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --bg: #0e0e0e;
+    --ink: #f4f1ea;
+    --line: rgba(244, 241, 234, 0.22);
+    --dim: rgba(244, 241, 234, 0.55);
+    --yellow: #FFD400;
+    --orange: #262277;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .condensed {
+    font-family: "Arial Narrow", "HelveticaNeue-CondensedBold", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-stretch: condensed;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+  }
+
+  /* ===== 背景巨型若隐若现文字 ===== */
+  .bg-word {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(120px, 24vw, 340px);
+    font-weight: 900;
+    color: var(--ink);
+    opacity: 0.05;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    user-select: none;
+    pointer-events: none;
+    animation: drift 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {
+    from { transform: translate(-52%, -50%) scale(1); }
+    to   { transform: translate(-48%, -50%) scale(1.04); }
+  }
+
+  /* ===== 顶部导航 ===== */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    z-index: 5;
+  }
+
+  .logo {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+
+  .nav-center {
+    display: flex;
+    gap: 22px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--dim);
+  }
+
+  .nav-right {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-right .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--yellow);
+    animation: blink 1.6s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* ===== 中央黄色圆形（门户） ===== */
+  .portal-wrap {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  .portal {
+    width: 150px;
+    height: 150px;
+    background: var(--yellow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    /* 呼吸形变 */
+    animation: morph 5s ease-in-out infinite;
+    transition: transform 0.85s cubic-bezier(0.7, 0, 0.3, 1);
+  }
+
+  @keyframes morph {
+    0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; transform: scale(1); }
+    25%      { border-radius: 55% 45% 52% 48% / 48% 55% 45% 52%; transform: scale(1.02); }
+    50%      { border-radius: 48% 52% 55% 45% / 52% 48% 52% 48%; transform: scale(0.99); }
+    75%      { border-radius: 52% 48% 48% 52% / 45% 52% 48% 55%; transform: scale(1.03); }
+  }
+
+  /* 脉冲光环 */
+  .portal::before {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border: 1px solid rgba(255, 212, 0, 0.5);
+    border-radius: 50%;
+    animation: pulse 2.2s ease-out infinite;
+  }
+
+  @keyframes pulse {
+    0%   { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+
+  /* 门：圆形中间的小门洞 */
+  .door {
+    width: 34px;
+    height: 52px;
+    background: var(--bg);
+    border-radius: 20px 20px 6px 6px;
+    position: relative;
+  }
+
+  .door::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--yellow);
+    transform: translateY(-50%);
+  }
+
+  .portal-label {
+    margin-top: 14px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--bg);
+  }
+
+  /* 点击后：放大铺满屏幕并转橙 */
+  .portal-wrap.entering .portal {
+    animation: none;
+    border-radius: 50%;
+    transform: scale(18);
+    background: var(--orange);
+  }
+
+  .portal-wrap.entering .door,
+  .portal-wrap.entering .portal-label,
+  .portal-wrap.entering .portal::before {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  /* 放大后短暂停留的白场文字 */
+  .enter-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .entering-text .enter-text {
+    animation: showText 0.9s ease 0.25s forwards;
+  }
+
+  @keyframes showText {
+    to { opacity: 1; }
+  }
+
+  /* ===== 底部提示 ===== */
+  .foot {
+    position: fixed;
+    bottom: 26px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 5;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--dim);
+  }
+
+  .foot .arrow {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--yellow);
+    animation: bounce 1.5s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(6px); }
+  }
+
+  /* 四周小标签 */
+  .corner {
+    position: fixed;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(244, 241, 234, 0.35);
+    z-index: 5;
+  }
+  .corner.tl { top: 72px; left: 28px; }
+  .corner.tr { top: 72px; right: 28px; }
+  .corner.bl { bottom: 72px; left: 28px; }
+  .corner.br { bottom: 72px; right: 28px; }
+</style>
+</head>
+<body>
+
+  <!-- 背景巨字 -->
+  <div class="bg-word condensed">MY-CARD</div>
+
+  <!-- 顶部导航 -->
+  <nav class="nav">
+    <span class="logo">◆ MY-CARD</span>
+    <div class="nav-center">
+      <span>廖若曦</span>
+      <span>冯楚涵</span>
+      <span>李怡苒</span>
+    </div>
+    <span class="nav-right"><span class="dot"></span>SORTING · OBSERVING · EXPERIMENTING</span>
+  </nav>
+
+  <!-- 中央门户 -->
+  <div class="portal-wrap" id="portalWrap">
+    <div class="portal">
+      <div class="door"></div>
+      <div class="portal-label">ENTER</div>
+    </div>
+  </div>
+
+  <!-- 放大转场文字 -->
+  <div class="enter-text condensed">LIAO · FENG · LI</div>
+
+  <!-- 四角小标签 -->
+  <span class="corner tl">✦ PORTFOLIO EST. 2026</span>
+  <span class="corner tr">✦ 《客厅》 RESEARCH</span>
+  <span class="corner bl">✦ VISUAL COMMUNICATION</span>
+  <span class="corner br">✦ TEAM OF 3</span>
+
+  <!-- 底部提示 -->
+  <div class="foot">
+    点击黄色圆形 · 进入小组名片
+    <span class="arrow">↓</span>
+  </div>
+
+<script>
+  document.getElementById("portalWrap").addEventListener("click", function () {
+    this.classList.add("entering");
+    document.body.classList.add("entering-text");
+    setTimeout(function () {
+      window.location.href = "index.html";
+    }, 1100);
+  });
+</script>
+
+</body>
+</html>
